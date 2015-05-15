@@ -19,6 +19,14 @@
 
 <p>Here we can post information about what we discussed at code review this week. So far, it seems like having code review every two weeks would work well with most people's schedule.  </p>
 
+
+<p>This is the <code>Panel</code> constructor:</p>
+<pre><code>function Panel(element, canClose, closeHandler) {
+  this.element = element;
+  this.canClose = canClose;
+  this.closeHandler = function () { if (closeHandler) closeHandler() };
+}</code></pre>
+
       <footer>
         <p><small>&copy;GillLab_CodeReview 2015</small></p>
       </footer>

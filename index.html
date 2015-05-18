@@ -30,7 +30,23 @@
 <pre><code>#!usr/bin/python  
 </code></pre>
 
+<h4>Data variable types: strings, ints, floats</h4>
+<p>A variable represents a memory location on your device used to store information. When you create a variable, a location is setup in memory with the variable name as an identifier for that location and the value stored at that location. For example, you can create a variable called "a" with a value of 5 using the 'assignment' operator (<code>=</code>). Not the same as the 'equals' sign in mathematics</p>
 
+<pre><code>my_list = [0, 1, 2, 3]
+animals = ['panda', 'fox', 'dog', 'kangaroo']
+
+length = len(animals)
+print length
+my_range = range(length)
+print my_range
+
+for number in range(len(animals)):
+  print animals[number]  
+</code></pre>
+
+
+<p>There are several data types available in python. Some data types hold only one value. These types include: str (short for string), int (short for integer), and float (decimal point number).</p>
 <pre><code>my_list = [0, 1, 2, 3]
 animals = ['panda', 'fox', 'dog', 'kangaroo']
 

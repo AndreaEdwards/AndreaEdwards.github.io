@@ -87,6 +87,10 @@ dt {
   font-weight:700;
 }
 
+caption {
+  color:#444;
+}
+
 th {
   color:#444;
 }

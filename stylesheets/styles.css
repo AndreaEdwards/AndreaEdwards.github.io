@@ -88,6 +88,9 @@ dt {
 }
 
 caption {
+  text-align:left;
+  padding:5px 10px;
+  border-bottom:1px solid #e5e5e5;
   color:#444;
 }
 

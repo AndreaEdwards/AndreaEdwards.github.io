@@ -26,9 +26,20 @@
 </ol>
 
 <h4>Constructing a .py file</h4>
-<p>A python executable is created by appending .py to the end of your file. Usually, you will also see that the first line begins with a hash tag (<code>#</code>) and bang symbol (<code>!</code>) followed by a file path. This indicates the <code>file path</code> pointing to the version of python you should use:</p>
+<p>A python executable is created by appending .py to the end of your file. Usually, you will also see that the first line begins with a hash tag (<code>#</code>) and bang symbol (<code>!</code>) followed by a file path. This indicates the <code>file path</code> pointing to the version of python you should use. This line is not required for a python file to run. However, it can be useful for indicating the version of python you used when writing the code.</p>
 <pre><code>#!usr/bin/python  
 </code></pre>
+
+<p>When looking at examples of a polished code base, you will commonly see import statements at the beginning of the file. Although it is not required to collect all the import statements at the head of the file, this habit makes the script very readable for you and others. There are a few notable recommendations for using import statements. Usually, imports should be on separate lines.</p>
+
+<p>Recommended:</p>
+
+<pre><code>import os
+import sys</code></pre>
+
+<p>Not recommended:</p>
+
+<pre><code>import sys, os</code></pre>
 
 <h4>Data variable types: strings, ints, floats</h4>
 <p>A variable represents a memory location on your device used to store information. When you create a variable, a location is setup in memory with the variable name as an identifier for that location and the value stored at that location. For example, you can create a variable called "a" with a value of 5 using the 'assignment' operator (<code>=</code>). Note: The <code>=</code> symbol has a different meaning than it does in mathematics. The assignment operator follows the syntax: left-hand-side = right-hand-side</p>

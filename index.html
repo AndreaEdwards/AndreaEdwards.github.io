@@ -26,7 +26,7 @@
 </ol>
 
 <h4>Constructing a .py file</h4>
-<p>A python executable is created by appending .py to the end of your file. Usually, you will also see that the first line begins with a hash tag (<code>#</code>) and bang symbol (<code>!</code>) followed by a file path. This indicates the <code>file path</code> pointing to the version of python you should use. This line is not required for a python file to run. However, it can be useful for indicating the version of python you used when writing the code.</p>
+<p>A python executable is created by appending .py to the end of your file. Usually, you will also see that the first line begins with a hash tag (<code>#</code>) and bang symbol (<code>!</code>) followed by a file path. This indicates the <code>file path</code> pointing to the version of python you should use. This line is not required for a python script to run. However, it can be useful for indicating the version of python you used when writing the code, which may be helpful for others.</p>
 <pre><code>#!usr/bin/python  
 </code></pre>
 
@@ -40,6 +40,14 @@ import sys</code></pre>
 <p>Not recommended:</p>
 
 <pre><code>import sys, os</code></pre>
+
+<p>It is also useful to format import statements in a way that allows you to only import the module that you need. This can really help make your code readable for others. For example: </p>
+
+<pre><code>from subprocess import Popen, PIPE</code></pre>
+
+<p>Similarly, you may want to use a shorthand for a module or library that you will be using repeatedly in your script. This can be accomplished using this syntax:</p>
+
+<pre><code>import numpy as np</code></pre>
 
 <h4>Data variable types: strings, ints, floats</h4>
 <p>A variable represents a memory location on your device used to store information. When you create a variable, a location is setup in memory with the variable name as an identifier for that location and the value stored at that location. For example, you can create a variable called "a" with a value of 5 using the 'assignment' operator (<code>=</code>). Note: The <code>=</code> symbol has a different meaning than it does in mathematics. The assignment operator follows the syntax: left-hand-side = right-hand-side</p>

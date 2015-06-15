@@ -114,16 +114,37 @@ print type(int_variable)</code></pre>
       <td>string_1string_2</td>
     </tr>
     <tr>
-      <td>str(5) + 2.5</td>
+      <td><code>str(5) + 2.5</code></td>
       <td>TypeError: cannot concatenate 'str' and 'int' objects</td>
       <td></td>
     </tr>
     <tr>
-      <td>str(5) + str(2.5)</td>
+      <td><code>str(5) + str(2.5)</code></td>
       <td>Concatenation</td>
       <td>52.5</td>
     </tr>
 </table>
+
+<table>
+  <caption><span>The <code>%</code> (modulo) operator: performs remainder division of the first argument by the second when presented with int or float types. This operator can also be used with strings to easily insert the value of a variable where necessary.</span></caption>
+  <tr>
+    <td><code>7 % 2</code></td>
+    <td>Remainder division</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td><code>6 % 2</code></td>
+    <td>Remainder division</td>
+    <td>0</td>
+  </tr>
+  <tr><code>int = 6
+  string_1 = 'Syntax for inserting the value of a variable with modulo: %s' % int
+  print string_1</code></tr>
+  <tr><code>float = 6.234532
+  string_2 = 'You can format the number to include a certain number of decimal places: %.2f' % float</code></tr>
+</table>
+
+<p>More info on string formatting operations can be found <a href="https://docs.python.org/2/library/stdtypes.html#string-formatting">here</a>.</p>
 
 <h4>Data structures: list</h4>
 <h4>Iterators: for and while loops</h4>

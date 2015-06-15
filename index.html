@@ -86,9 +86,43 @@ import sys</code></pre>
   </tr>
   <tr>
     <td><code>float(a) / 2</code></td>
-    <td>Fload Division</td>
+    <td>Float Division</td>
     <td><code>2.5</code></td>
   </tr>
+</table>
+
+<p>Always make sure that the numbers you are working with are not strings before using operators that can take strings as well as ints and floats. For example, if you are asking the user for input using python's built-in input method, be aware that the the input will be of str type. Cast to int or float before performing calculations.</p>
+
+<pre><code>str_variable = raw_input("Input a number: ")
+print type(str_variable)
+int_variable = int(raw_input("Input a number: "))
+print type(int_variable)</code></pre>
+
+<table>
+  <caption><span style="font-weight:700;">The <code>+</code> operator: performs addition with floats and integers and performs concatenation with strings.</span></caption>
+    <th>Input</th>
+    <th>Function</th>
+    <th>Output</th>
+    <tr>
+      <td><code>5 + 2.5</code></td>
+      <td>Addition</td>
+      <td>7.5</td>
+    </tr>
+    <tr>
+      <td><code>string_1 + string_2</code></td>
+      <td>Concatenation</td>
+      <td>string_1string_2</td>
+    </tr>
+    <tr>
+      <td>str(5) + 2.5</td>
+      <td>TypeError: cannot concatenate 'str' and 'int' objects</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>str(5) + str(2.5)</td>
+      <td>Concatenation</td>
+      <td>52.5</td>
+    </tr>
 </table>
 
 <h4>Data structures: list</h4>

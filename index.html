@@ -61,7 +61,7 @@ import sys</code></pre>
 
 <p>Based on the data type of a variable, the interpreter allocates memory and decides what can be stored in the reserved memory. Therefore, by assigning different data types to variables, you can store integers, decimal or characters in these variables. Python variables do not need explicit declaration to reserve memory space. The declaration happens automatically when you assign a value to a variable.</p>
 
-<p>The data type of a variable determines how operators and other methods will behave when the variable is passed to these functions. The data type of a variable can be accessed by calling the <code>type()</code> method</p>
+<p>There are several data types available in python. Some data types hold only one value. These types include: str (short for string), int (short for integer), and float (decimal point number). The data type of a variable determines how operators and other methods will behave when the variable is passed to these functions. The data type of a variable can be accessed by calling the <code>type()</code> method</p>
 
 <pre><code>print type(a)</code></pre>
 
@@ -168,7 +168,7 @@ print string_2</code></pre></td>
 <p>If you already know what data you need in the list, you can populate the list at the same time that you initialize the data structure. Note that you can store a list (or another data structure such as dictionary, set, or tuple) as an item in the list.</p>
 <pre><code>yourList = ['apple', 'orange', '42', []]</code></pre>
 
-<p>Items in lists have indices, which indicate the position of a particular item in the list. Indices always begin with 0 and increment up to the total length of the list. Using negative numbers for indices allows you to search through the list beginning with the last value.</p>
+<p>Items in lists have indices, which indicate the position of a particular item in the list. Indices always begin with 0 and increment up to the total length of the list. Using negative numbers for indices allows you to search through the list beginning with the last value. The index allows us to access each item in the list.</p>
 
 <pre><code>print yourList[0]
 print yourList[-1]</code></pre>
@@ -206,18 +206,33 @@ print newList</code></pre>
 
 <h3>Iterators: for and while loops</h3>
 
-<p>There are several data types available in python. Some data types hold only one value. These types include: str (short for string), int (short for integer), and float (decimal point number).</p>
-<pre><code>my_list = [0, 1, 2, 3]
-animals = ['panda', 'fox', 'dog', 'kangaroo']
+<p>We can iterate through items in a string or collection (list, dict, set, tuple) using an <em>iterator</em>. An iterator is a control structure that allows for looping. Iterators allow us to perform a task over and over and over and over until a particular condition is met. Two very useful iterators we discussed are <code>for</code> and <code>while</code> loops.</p>
 
-length = len(animals)
-print length
-my_range = range(length)
-print my_range
+<p>An example of a <code>while</code> loop:</p>
+<pre><code>x = 0
+while x < 5:
+  x = x + 1 # an equivalent expression is: x += 1
+  print x
+print 'done'</code></pre>
 
-for number in range(len(animals)):
-  print animals[number]  
+<p>Note that without the expression <code>x = x + 1</code>, the condition <code>x < 5</code> will always be true. If the statement is always true, then you have an <em>infinite loop</em>. Infinite loops are bad. They will crash your computer.</p>
+
+<p>An example of a <code>for</code> loop:</p>
+<pre><code>collection = 'The quick brown fox jumped over the lazy dog.'
+for item in collection:
+  print item</code></pre>
+
+<p>Using the range() method is an easy way to loop over items in a list without knowing the length of the list ahead of time.</p>
+
+<pre><code>animals = ['panda', 'fox', 'dog', 'kangaroo']
+for i in range(len(animals)):
+  print animals[i]  
 </code></pre>
+
+<p>While it is sometimes very useful to iterate through a list using indices, this is not neccessary.</p>
+
+<pre><code>for animal in animals:
+  print animal</code></pre>
 
 
     </div>

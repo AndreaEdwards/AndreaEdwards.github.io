@@ -158,8 +158,53 @@ print string_2</code></pre></td>
 
 <p>More info on string formatting operations can be found <a href="https://docs.python.org/2/library/stdtypes.html#string-formatting">here</a>.</p>
 
-<h4>Data structures: list</h4>
-<h4>Iterators: for and while loops</h4>
+<h3>Data structures: list</h3>
+
+<p>A list is a data structure that contains an arbitrary amount of data. All data types can be put in a list, and a list can contain more than one type of data.</p>
+
+<p>An empty list is instantiated using the following syntax:</p>
+<pre><code>myList = []</code></pre>
+
+<p>If you already know what data you need in the list, you can populate the list at the same time that you initialize the data structure. Note that you can store a list (or another data structure such as dictionary, set, or tuple) as an item in the list.</p>
+<pre><code>yourList = ['apple', 'orange', '42', []]</code></pre>
+
+<p>Items in lists have indices, which indicate the position of a particular item in the list. Indices always begin with 0 and increment up to the total length of the list. Using negative numbers for indices allows you to search through the list beginning with the last value.</p>
+
+<pre><code>print yourList[0]
+print yourList[-1]</code></pre>
+
+<p>Lists are mutable. This means that you can change the values of items in the list. Not all data structures are mutable. For example, tuples are not mutable.</p>
+
+<pre><code>yourList[0] = 'banana'
+print yourList</code></pre>
+
+<p>There are several built-in methods in python that allow you to analyze or manipulate lists. (Note: A <em>method</em> is another word for <em>function</em>. Generally speaking, a function is referred to as a method if it is a member function of a class. In this case the list object is a built-in class in python, and this object has a several methods associated with it. The term <em>function</em> is generally used when referring to a script that is not specific to only one class)</p>
+
+<p>We can print the length of myList and yourList using the len() function. (For more information on len() and other built-in functions see the <a href="https://docs.python.org/2/library/functions.html">python docs</a>)</p>
+
+<pre><code>print len(myList)
+print len(yourList)</code></pre>
+
+<p>The append() method allows us to add items onto the end of a list. Note the syntax used with this method. Object.function(argument) This is a very common pattern throughout computer science (not limited to the python language).</p>
+
+<pre><code>myList.append('sandwich')
+print myList</code></pre>
+
+<p>Other functions/methods have a more strange syntax. For example, the join method has the syntax str.join(iterable)</p>
+
+<pre><code>yourString = ' '.join(yourList)
+print yourString</code></pre>
+
+<p>There are other useful methods for lists. These include sort() and reverse()</p>
+
+<pre><code>newList = [3, 2, 5, 4, 81]
+newList.sort()
+print newList
+
+newList.reverse()
+print newList</code></pre>
+
+<h3>Iterators: for and while loops</h3>
 
 <p>There are several data types available in python. Some data types hold only one value. These types include: str (short for string), int (short for integer), and float (decimal point number).</p>
 <pre><code>my_list = [0, 1, 2, 3]

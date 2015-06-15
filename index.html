@@ -234,7 +234,35 @@ for i in range(len(animals)):
 <pre><code>for animal in animals:
   print animal</code></pre>
 
-<p>I don't understand what is going on.</p>
+<p>Iterators are extremely useful for data mapping, filtering, and reduction.</p>
+
+<p>Mapping example:</p>
+
+<pre><code>destination = []
+for animal in animals:
+  destination.append(animal + 'is cute')
+print 'original:', animals
+print 'mapped:', destination
+print len(animals), len(destination)</code></pre>
+
+<p>Filtering example:</p>
+
+<pre><code>numbers = [1, 2, 3, 4]
+destination = []
+for number in numbers:
+  if number > 2:
+    destination.append(number * 2)
+print destination
+print len(numbers), len(desintation)</code></pre>
+
+<p>Reducing example:</p>
+
+<pre><code>number = [1, 2, 3, 4]
+total = 0
+for number in numbers:
+  total += number
+print 'original:', numbers
+print 'total:', total</code></pre>
 
 
     </div>

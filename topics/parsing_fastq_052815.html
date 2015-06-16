@@ -14,253 +14,86 @@
 <div>
 <h2><a id="gill-lab-code-review" class="anchor" href="#gill-lab-code-review" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="/index.html">Gill lab Code Review</a></h2>
 
-<h2>Topics from 05/14/15:</h2>
+<h2>Topics from 05/28/15:</h2>
 <ol>
-  <li>Constructing a .py file</li>
-  <li>Data types: strings, ints, floats</li>
-  <li>Binary operators: /, +, % </li>
-  <li>Data structures: list</li>
-  <li>Iterators: for and while loop</li>
+  <li>What does parsing a file mean?</li>
+  <li>An example of .fastq parser for Illumina instruments</li>
 </ol>
 
-<h3>Constructing a .py file</h3>
-<p>A python executable is created by appending .py to the end of your file. Usually, you will also see that the first line begins with a hash tag (<code>#</code>) and bang symbol (<code>!</code>) followed by a file path. This indicates the <code>file path</code> pointing to the version of python you should use. This line is not required for a python script to run. However, it can be useful for indicating the version of python you used when writing the code, which may be helpful for others.</p>
-<pre><code>#!usr/bin/python  
-</code></pre>
+<h3>What does <em>parsing</em> a file mean?</h3>
+<p>According to Wikipedia, <a href="https://en.wikipedia.org/wiki/Parsing"><em>parsing</em></a> is the process of analyzing a string of symbos, either in natural language or in computer languages, conforming to the rules of a formal grammer. This means that in order to build a parser for a particular type of file, it is critical to understand the syntactic structure of that file.</p>
 
-<p>When looking at examples of a polished code base, you will commonly see import statements at the beginning of the file. Although it is not required to collect all the import statements at the head of the file, this habit makes the script very readable for you and others. There are a few notable recommendations for using import statements. Usually, imports should be on separate lines.</p>
+<p><a href="https://en.wikipedia.org/wiki/FASTQ_format">The FASTQ format</a> is a text-based format for storing both nucleotide sequence information and its corresponding quality scores. The structure of .fastq file is a repetitive block of four lines for each sequence represented in the file: </p>
+<ul>
+  <li>Line 1 always begins with the '@' character and is followed by a sequence identifier and an optional description.</li>
+  <li>Line 2 is the raw sequence.</li>
+  <li>Line 3 begins with a '+' character and is optionally followed by the same sequence identifier (and any description).</li>
+  <li>Line 4 encodes the quality values for the sequence in Line 2, and must contain the same number of symbols as letters in the sequence.</li>
+</ul>
 
-<p>Recommended:</p>
+<p>An example of a four-line block from a .fastq file:</p>
+<pre><code>@M00517:255:000000000-AD26G:1:1101:15420:1337 1:N:0:0
+GGCCGGCAAAGACACTTGCCTAATTTCTTTATCGATCGCCCGATTTTTGCTGGGTGATCGCGATTATCATCATGACCGCAGGGGGCTGGCGATCCTCAAACTGCCGGTGGCGCAAGATCTTGACAGCTAGCTCAGTCCTAGGTATAATCAA
++
+CCCB@BBCCFFFGGGGGGGGGGHHHHHHHHHHHHHHHGGGGGCGGGHHGHHHHGFFHHHGGGGGHGHHHHHHHHHHHGGGGGGGGGGGGGGCGGGHHHHHHHEHHGGBDGHGGGGGHHHHHHHHHHHHHHHHHHHHHHHHHHGGHHHHHHH</code></pre>
 
-<pre><code>import os
-import sys</code></pre>
 
-<p>Not recommended:</p>
+<h3>An example of .fastq parser for Illumina instruments</h3>
+<p>Andrew walked us through a fastq parser that he wrote to process the three files received from an Illumina instrument.</p>
 
-<pre><code>import sys, os</code></pre>
+<pre><code>def fastq_splitter_pairedend(R1file,R2file,Indexfile,BCmapfile,levdist,outdir,kmer,start,stop,maxnum):
+ import time
+ time0=time.time()
 
-<p>It is also useful to format import statements in a way that allows you to only import the module that you need. This can really help make your code readable for others. For example: </p>
+ import BioModules
+ from itertools import izip
+ from BioModules import revcomp
+ import collections
+ import Levenshtein as Lev
+ counts = collections.defaultdict(int)
+ totalseqs=0
+ assigned=0
+ R1=open(R1file,'r')
+ R2=open(R2file,'r')
+ I1=open(Indexfile,'r')
+ mydict=[]
+ BCs=[]
+ with open(BCmapfile,'r') as f:
+     for line in f.readlines():
+         line=line.strip().split('\t')
+         BCs.append((line[0],line[1]))
+ outfs = dict([(ID, open(outdir+ID + ".fasta", "w"))
+                 for ID,seq in BCs])
+ mylist=enumerate(izip(R1,R2,I1))
+ for i, (line1,line2,line3) in mylist:
+     if i < maxnum:
+         totalseqs+=1
+         R1_ID,R2_ID,I1_ID=line1,line2.rstrip(),line3
+         seqs=mylist.next()
+         seq1,seq2,index=seqs[1][0],revcomp(seqs[1][1].strip()),seqs[1][2][1:]
+         spacer=mylist.next()
+         quals=mylist.next()
+         q1,q2,qI=quals[1][0],quals[1][1][::-1],quals[1][2]
 
-<pre><code>from subprocess import Popen, PIPE</code></pre>
+         for ID,BC in BCs:
+             #Defines the acceptable deviations of the index read from the mapping barcodes
+             # and looks for kmers in the sequences. Can do various different processing steps here
+             if Lev.distance(index,BC)<=levdist and kmer in seq1:
+                 group=ID
+                 assigned+=1
+                 for key,value in outfs.iteritems():
+                     if group==key:
+                         #trim and concatenate reads 1&2 and write to file, can alter the behavior here as desired
+                         value.write(R1_ID.replace(u'@','>').strip()+'R1'+'\n'+seq1+R2_ID.replace(u'@','>')+'\n'+seq2+'\n')
+                         counts[group]+=1
+                         #print seq1
+                         break
+         else:
+             pass
+ for i in outfs.values():
+     i.close()
 
-<p>Similarly, you may want to use a shorthand for a module or library that you will be using repeatedly in your script. This can be accomplished using this syntax:</p>
-
-<pre><code>import numpy as np</code></pre>
-
-<h3>Data variable types: strings, ints, floats</h3>
-<p>A variable represents a memory location on your device used to store information. When you create a variable, a location is setup in memory with the variable name as an identifier for that location and the value stored at that location. For example, you can create a variable called "a" with a value of 5 using the 'assignment' operator (<code>=</code>). Note: The <code>=</code> symbol has a different meaning than it does in mathematics. The assignment operator follows the syntax: left-hand-side (variable name) = right-hand-side (value)</p>
-
-<pre><code>a = 5
-</code></pre>
-
-<p>After the variable assignment has been executed, a location in memory is allocated, the data <code>5</code> is stored there, and the information stored at that location can be retrieved by calling the variable name <code>a</code>.</p>
-
-<pre><code>print a</code></pre>
-
-<p>Based on the data type of a variable, the interpreter allocates memory and decides what can be stored in the reserved memory. Therefore, by assigning different data types to variables, you can store integers, decimal or characters in these variables. Python variables do not need explicit declaration to reserve memory space. The declaration happens automatically when you assign a value to a variable.</p>
-
-<p>There are several data types available in python. Some data types hold only one value. These types include: str (short for string), int (short for integer), and float (decimal point number). The data type of a variable determines how operators and other methods will behave when the variable is passed to these functions. The data type of a variable can be accessed by calling the <code>type()</code> method</p>
-
-<pre><code>print type(a)</code></pre>
-
-<h3>Binary operators:&nbsp;&nbsp;&nbsp;&nbsp; /,&nbsp;&nbsp;+,&nbsp;&nbsp;%</h3>
-
-<p>Binary operators are functions that accept two arguments and have a special syntax (akin to a mathematical expression). Python offers several arithmetic operators [<code>+</code>,&nbsp;&nbsp;<code>-</code>,&nbsp;&nbsp;<code>/</code>,&nbsp;&nbsp; <code>*</code>,&nbsp;&nbsp; <code>%</code>,&nbsp;&nbsp; <code>**</code>,&nbsp;&nbsp; and &nbsp;&nbsp;<code>//</code>). Notably, some operators have different functions depending on the variable types that are passed as arguments.</p>
-
-<table>
-<caption><span style="font-weight:700;">The <code>/</code> operator:</span> performs integer or float division</caption>
-  <th>Input</th>
-  <th>Function</th>
-  <th>Output</th>
-  <tr>
-    <td><code>5 / 2</code></td>
-    <td>Integer Division</td>
-    <td><code>2</code></td>
-  </tr>
-  <tr>
-    <td><code>5.0 / 2</code></td>
-    <td>Float Division</td>
-    <td><code>2.5</code></td>
-  </tr>
-  <tr>
-    <td><code>float(a) / 2</code></td>
-    <td>Float Division</td>
-    <td><code>2.5</code></td>
-  </tr>
-</table>
-
-<p>Always make sure that the numbers you are working with are not strings before using operators that can take strings as well as ints and floats. For example, if you are asking the user for input using python's built-in input method, be aware that the the input will be of str type. Cast to int or float before performing calculations.</p>
-
-<pre><code>str_variable = raw_input("Input a number: ")
-print type(str_variable)
-int_variable = int(raw_input("Input a number: "))
-print type(int_variable)</code></pre>
-
-<table>
-  <caption><span style="font-weight:700;">The <code>+</code> operator:</span> performs addition with floats and integers and performs concatenation with strings.</caption>
-    <th>Input</th>
-    <th>Function</th>
-    <th>Output</th>
-    <tr>
-      <td><code>5 + 2.5</code></td>
-      <td>Addition</td>
-      <td>7.5</td>
-    </tr>
-    <tr>
-      <td><code>string_1 + string_2</code></td>
-      <td>Concatenation</td>
-      <td>string_1string_2</td>
-    </tr>
-    <tr>
-      <td><code>str(5) + 2.5</code></td>
-      <td>TypeError: cannot concatenate 'str' and 'int' objects</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td><code>str(5) + str(2.5)</code></td>
-      <td>Concatenation</td>
-      <td>52.5</td>
-    </tr>
-</table>
-
-<table>
-  <caption><span style="font-weight:700;">The <code>%</code> (modulo) operator:</span> performs remainder division of the first argument by the second when presented with int or float types. This operator can also be used with strings to easily insert the value of a variable where necessary.</caption>
-  <th>Input</th>
-  <th>Function</th>
-  <th>Output</th>
-  <tr>
-    <td><code>7 % 2</code></td>
-    <td>Remainder division</td>
-    <td>1</td>
-  </tr>
-  <tr>
-    <td><code>6 % 2</code></td>
-    <td>Remainder division</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td><pre><code>int = 6
-string_1 = 'Syntax for inserting the value of a variable with modulo: %s' % int
-print string_1</code></pre></td>
-    <td>Insertion</td>
-    <td>Syntax for inserting the value of a variable with modulo: 6</td>
-  </tr>
-  <tr>
-    <td><pre><code>float = 6.234532
-string_2 = 'You can format the number to include a certain number of decimal places: %.2f' % float
-print string_2</code></pre></td>
-    <td>Insertion</td>
-    <td>You can format the number to include a certain number of decimal places: 6.23</td>
-  </tr>
-</table>
-
-<p>More info on string formatting operations can be found <a href="https://docs.python.org/2/library/stdtypes.html#string-formatting">here</a>.</p>
-
-<h3>Data structures: list</h3>
-
-<p>A list is a data structure that contains an arbitrary amount of data. All data types can be put in a list, and a list can contain more than one type of data.</p>
-
-<p>An empty list is instantiated using the following syntax:</p>
-<pre><code>myList = []</code></pre>
-
-<p>If you already know what data you need in the list, you can populate the list at the same time that you initialize the data structure. Note that you can store a list (or another data structure such as dictionary, set, or tuple) as an item in the list.</p>
-<pre><code>yourList = ['apple', 'orange', '42', []]</code></pre>
-
-<p>Items in lists have indices, which indicate the position of a particular item in the list. Indices always begin with 0 and increment up to the total length of the list. Using negative numbers for indices allows you to search through the list beginning with the last value. The index allows us to access each item in the list.</p>
-
-<pre><code>print yourList[0]
-print yourList[-1]</code></pre>
-
-<p>Lists are mutable. This means that you can change the values of items in the list. Not all data structures are mutable. For example, tuples are not mutable.</p>
-
-<pre><code>yourList[0] = 'banana'
-print yourList</code></pre>
-
-<p>There are several built-in methods in python that allow you to analyze or manipulate lists. (Note: A <em>method</em> is another word for <em>function</em>. Generally speaking, a function is referred to as a method if it is a member function of a class. In this case the list object is a built-in class in python, and this object has a several methods associated with it. The term <em>function</em> is generally used when referring to a script that is not specific to only one class)</p>
-
-<p>We can print the length of myList and yourList using the len() function. (For more information on len() and other built-in functions see the <a href="https://docs.python.org/2/library/functions.html">python docs</a>)</p>
-
-<pre><code>print len(myList)
-print len(yourList)</code></pre>
-
-<p>The append() method allows us to add items onto the end of a list. Note the syntax used with this method. Object.function(argument) This is a very common pattern throughout computer science (not limited to the python language).</p>
-
-<pre><code>myList.append('sandwich')
-print myList</code></pre>
-
-<p>Other functions/methods have a more strange syntax. For example, the join method has the syntax str.join(iterable)</p>
-
-<pre><code>yourString = ' '.join(yourList)
-print yourString</code></pre>
-
-<p>There are other useful methods for lists. These include sort() and reverse()</p>
-
-<pre><code>newList = [3, 2, 5, 4, 81]
-newList.sort()
-print newList
-
-newList.reverse()
-print newList</code></pre>
-
-<h3>Iterators: for and while loops</h3>
-
-<p>We can iterate through items in a string or collection (list, dict, set, tuple) using an <em>iterator</em>. An iterator is a control structure that allows for looping. Iterators allow us to perform a task over and over and over and over until a particular condition is met. Two very useful iterators we discussed are <code>for</code> and <code>while</code> loops.</p>
-
-<p>An example of a <code>while</code> loop:</p>
-<pre><code>x = 0
-while x < 5:
-  x = x + 1 # an equivalent expression is: x += 1
-  print x
-print 'done'</code></pre>
-
-<p>Note that without the expression <code>x = x + 1</code>, the condition <code>x < 5</code> will always be true. If the statement is always true, then you have an <em>infinite loop</em>. Infinite loops are bad. They will crash your computer.</p>
-
-<p>An example of a <code>for</code> loop:</p>
-<pre><code>collection = 'The quick brown fox jumped over the lazy dog.'
-for item in collection:
-  print item</code></pre>
-
-<p>Using the range() method is an easy way to loop over items in a list without knowing the length of the list ahead of time.</p>
-
-<pre><code>animals = ['panda', 'fox', 'dog', 'kangaroo']
-for i in range(len(animals)):
-  print animals[i]  
-</code></pre>
-
-<p>While it is sometimes very useful to iterate through a list using indices, this is not neccessary.</p>
-
-<pre><code>for animal in animals:
-  print animal</code></pre>
-
-<p>Iterators are extremely useful for data mapping, filtering, and reduction.</p>
-
-<p>Mapping example:</p>
-
-<pre><code>destination = []
-for animal in animals:
-  destination.append(animal + 'is cute')
-print 'original:', animals
-print 'mapped:', destination
-print len(animals), len(destination)</code></pre>
-
-<p>Filtering example:</p>
-
-<pre><code>numbers = [1, 2, 3, 4]
-destination = []
-for number in numbers:
-  if number > 2:
-    destination.append(number * 2)
-print destination
-print len(numbers), len(desintation)</code></pre>
-
-<p>Reducing example:</p>
-
-<pre><code>number = [1, 2, 3, 4]
-total = 0
-for number in numbers:
-  total += number
-print 'original:', numbers
-print 'total:', total</code></pre>
+ print time.time()-time0</code></pre>
 
 
     </div>

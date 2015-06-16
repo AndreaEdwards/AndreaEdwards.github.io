@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <link rel="stylesheet" href="/stylesheets/github-light.css">
+    
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+<body>
+<div>
+<h2><a id="gill-lab-code-review" class="anchor" href="#gill-lab-code-review" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="/index.html">Gill lab Code Review</a></h2>
+
+<h2>Topics from 05/28/15:</h2>
+<ol>
+  <li>What does parsing a file mean?</li>
+  <li>An example of .fastq parser for Illumina instruments</li>
+</ol>
+
+<h3>What does <em>parsing</em> a file mean?</h3>
+<p>According to Wikipedia, <a href="https://en.wikipedia.org/wiki/Parsing">parsing</a> is the process of analyzing a string of symbos, either in natural language or in computer languages, conforming to the rules of a formal grammer. This means that in order to build a parser for a particular type of file, it is critical to understand the syntactic structure of that file.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/FASTQ_format">The FASTQ format</a> is a text-based format for storing both nucleotide sequence information and its corresponding quality scores. The structure of .fastq file is a repetitive block of four lines for each sequence represented in the file: </p>
+<ul>
+  <li>Line 1 always begins with the '@' character and is followed by a sequence identifier and an optional description.</li>
+  <li>Line 2 is the raw sequence.</li>
+  <li>Line 3 begins with a '+' character and is optionally followed by the same sequence identifier (and any description).</li>
+  <li>Line 4 encodes the quality values for the sequence in Line 2, and must contain the same number of symbols as letters in the sequence.</li>
+</ul>
+
+<p>An example of a four-line block from a .fastq file:</p>
+<pre><code>@M00517:255:000000000-AD26G:1:1101:15420:1337 1:N:0:0
+GGCCGGCAAAGACACTTGCCTAATTTCTTTATCGATCGCCCGATTTTTGCTGGGTGATCGCGATTATCATCATGACCGCAGGGGGCTGGCGATCCTCAAACTGCCGGTGGCGCAAGATCTTGACAGCTAGCTCAGTCCTAGGTATAATCAA
++
+CCCB@BBCCFFFGGGGGGGGGGHHHHHHHHHHHHHHHGGGGGCGGGHHGHHHHGFFHHHGGGGGHGHHHHHHHHHHHGGGGGGGGGGGGGGCGGGHHHHHHHEHHGGBDGHGGGGGHHHHHHHHHHHHHHHHHHHHHHHHHHGGHHHHHHH</code></pre>
+
+
+<h3>An example of .fastq parser for Illumina instruments</h3>
+<p>Andrew walked us through a fastq parser that he wrote to process the three files received from an Illumina instrument.</p>
+
+<pre><code>def fastq_splitter_pairedend(R1file,R2file,Indexfile,BCmapfile,levdist,outdir,kmer,start,stop,maxnum):
+ import time
+ time0=time.time()
+
+ import BioModules
+ from itertools import izip
+ from BioModules import revcomp
+ import collections
+ import Levenshtein as Lev
+ counts = collections.defaultdict(int)
+ totalseqs=0
+ assigned=0
+ R1=open(R1file,'r')
+ R2=open(R2file,'r')
+ I1=open(Indexfile,'r')
+ mydict=[]
+ BCs=[]
+ with open(BCmapfile,'r') as f:
+     for line in f.readlines():
+         line=line.strip().split('\t')
+         BCs.append((line[0],line[1]))
+ outfs = dict([(ID, open(outdir+ID + ".fasta", "w"))
+                 for ID,seq in BCs])
+ mylist=enumerate(izip(R1,R2,I1))
+ for i, (line1,line2,line3) in mylist:
+     if i < maxnum:
+         totalseqs+=1
+         R1_ID,R2_ID,I1_ID=line1,line2.rstrip(),line3
+         seqs=mylist.next()
+         seq1,seq2,index=seqs[1][0],revcomp(seqs[1][1].strip()),seqs[1][2][1:]
+         spacer=mylist.next()
+         quals=mylist.next()
+         q1,q2,qI=quals[1][0],quals[1][1][::-1],quals[1][2]
+
+         for ID,BC in BCs:
+             #Defines the acceptable deviations of the index read from the mapping barcodes
+             # and looks for kmers in the sequences. Can do various different processing steps here
+             if Lev.distance(index,BC)<=levdist and kmer in seq1:
+                 group=ID
+                 assigned+=1
+                 for key,value in outfs.iteritems():
+                     if group==key:
+                         #trim and concatenate reads 1&2 and write to file, can alter the behavior here as desired
+                         value.write(R1_ID.replace(u'@','>').strip()+'R1'+'\n'+seq1+R2_ID.replace(u'@','>')+'\n'+seq2+'\n')
+                         counts[group]+=1
+                         #print seq1
+                         break
+         else:
+             pass
+ for i in outfs.values():
+     i.close()
+
+ print time.time()-time0</code></pre>
+
+
+    </div>
+    <!--<script src="javascripts/scale.fix.js"></script>-->    
+  </body>
+
+<footer style="padding-top:50px;">
+  <p><small>&copy;GillLab_CodeReview 2015</small></p>
+</footer>
+
+</html>

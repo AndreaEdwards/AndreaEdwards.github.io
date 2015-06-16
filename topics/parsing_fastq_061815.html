@@ -25,6 +25,9 @@
 
 <ol>
   <li><a href="/downloads/miseq_data.zip">Download</a> the files. Open them in a text editor of your choice and briefly examine the format of each file.</li>
+  <li>Build a dictionary in which the key corresponds to line 1 of the .fastq file (either file is fine) and the value corresponds to the raw sequence. We will talk more about how to build dictionaries and why they are useful on Thursday. For now, use this as an oportunity to read about and experiment with <a href="https://docs.python.org/2/tutorial/datastructures.html#dictionaries">python's dictionary implementation</a>.</li>
+  <li>What is the average composition of each nucleotide (A, G, C, T) in the .fastq files? (Note: This information is not typically very useful. The purpose of this exercise is to import and use the numpy.mean and numpy.std modules from the <a href="http://www.numpy.org/">NumPy</a> library. We will briefly talk about NumPy and <a href="http://matplotlib.org/">matplotlib</a> on Thursday.)</li>
+  <li>Paired reads that overlap can be "merged" by aligning the forward and reverse reads to give a single .fastq or .fasta record for each pair. This merged file can then be split into separate files based on the barcodes and statistically analyzed to find something interesting about the experiment. Write a short script that uses <a href="http://drive5.com/usearch/">USEARCH</a> to build a merged .fastq file. Hint: the <a href="http://drive5.com/usearch/features_reads.html">USEARCH docs page</a> has some useful instructions.</li>
 </ol>
 
 

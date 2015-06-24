@@ -1,0 +1,6 @@
+echo hello world
+"hello world" is called a command line argument
+
+statements run but don't return a result.
+expressions run and return a result.
+
